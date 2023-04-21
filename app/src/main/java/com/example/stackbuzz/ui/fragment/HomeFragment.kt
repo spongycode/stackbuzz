@@ -1,14 +1,16 @@
 package com.example.stackbuzz.ui.fragment
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
+import android.view.View.GONE
 import android.view.ViewGroup
 import android.widget.ImageView
-import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.cardview.widget.CardView
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
@@ -19,9 +21,7 @@ import com.example.stackbuzz.data.api.ApiRepository
 import com.example.stackbuzz.data.model.QuestionItem
 import com.example.stackbuzz.databinding.FragmentHomeBinding
 import com.example.stackbuzz.util.HelperFunctions.getTimeAgo
-import com.google.android.material.chip.Chip
-import com.google.android.material.chip.ChipDrawable
-import com.google.android.material.chip.ChipGroup
+import com.google.android.material.bottomnavigation.BottomNavigationView
 
 
 class HomeFragment : Fragment() {
@@ -64,7 +64,6 @@ class HomeFragment : Fragment() {
         }
     }
 
-
     inner class HomeRecyclerAdapter(
         private val context: Context
     ) :
@@ -91,6 +90,7 @@ class HomeFragment : Fragment() {
             return ViewHolder(view)
         }
 
+        @SuppressLint("SetJavaScriptEnabled")
         override fun onBindViewHolder(holder: ViewHolder, position: Int) {
             val question: QuestionItem = mainDiffer.currentList[position]
             holder.title.text = question.title
@@ -105,11 +105,6 @@ class HomeFragment : Fragment() {
                 .placeholder(R.drawable.profile_pic)
                 .into(holder.image)
 
-            val chipGroup = ChipGroup(context).apply {
-                id = View.generateViewId()
-                chipSpacingVertical = 8
-                chipSpacingHorizontal = 8
-            }
             var tags = ""
             for (tag in question.tags!!) {
                 tags += "#${tag} "
@@ -118,6 +113,23 @@ class HomeFragment : Fragment() {
             holder.tagHolder.text = tags
 
             holder.timesAgo.text = getTimeAgo(question.creation_date!!)
+
+            holder.mainContainer.setOnClickListener {
+                activity!!
+                    .supportFragmentManager
+                    .beginTransaction().apply {
+                        replace(
+                            R.id.fragmentContainerView,
+                            WebViewFragment.newInstance(question.link.toString())
+                        )
+                        addToBackStack(null)
+                        commit()
+                    }
+                val view = activity?.findViewById<BottomNavigationView>(R.id.bottom_navigation)
+                if (view != null) {
+                    view.visibility = GONE
+                }
+            }
         }
 
         override fun getItemCount() = mainDiffer.currentList.size
@@ -132,6 +144,7 @@ class HomeFragment : Fragment() {
             internal val viewCount: TextView = view.findViewById(R.id.view_count_question)
             internal val tagHolder: TextView = view.findViewById(R.id.textview_tag_holder)
             internal val timesAgo: TextView = view.findViewById(R.id.textview_times_ago_question)
+            internal val mainContainer: CardView = view.findViewById(R.id.cv_main_holder)
         }
     }
 }
