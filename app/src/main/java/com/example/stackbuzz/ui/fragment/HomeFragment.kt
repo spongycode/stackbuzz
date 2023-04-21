@@ -94,7 +94,7 @@ class HomeFragment : Fragment() {
         override fun onBindViewHolder(holder: ViewHolder, position: Int) {
             val question: QuestionItem = mainDiffer.currentList[position]
             holder.title.text = question.title
-            holder.username.text = question.owner!!.display_name
+            holder.username.text = question.owner!!.display_name + " · "
             holder.score.text = question.score.toString()
             holder.answerCount.text = question.answer_count.toString()
             holder.viewCount.text = question.view_count.toString()
@@ -110,30 +110,12 @@ class HomeFragment : Fragment() {
                 chipSpacingVertical = 8
                 chipSpacingHorizontal = 8
             }
-
+            var tags = ""
             for (tag in question.tags!!) {
-                val chip = Chip(context).apply {
-                    text = tag
-                    setChipDrawable(
-                        ChipDrawable.createFromAttributes(
-                            context,
-                            null,
-                            0,
-                            com.google.android.material.R.style.Widget_Material3_Chip_Suggestion
-                        )
-                    )
-
-                    textStartPadding = 0F
-                    textEndPadding = 0F
-                    textSize = 10F
-                    id = View.generateViewId()
-                    setChipStrokeColorResource(R.color.transparent)
-                }
-                chipGroup.addView(chip)
+                tags += "#${tag} "
             }
 
-            holder.tagHolder.removeAllViews()
-            holder.tagHolder.addView(chipGroup)
+            holder.tagHolder.text = tags
 
             holder.timesAgo.text = getTimeAgo(question.creation_date!!)
         }
@@ -148,7 +130,7 @@ class HomeFragment : Fragment() {
             internal val score: TextView = view.findViewById(R.id.score_question)
             internal val answerCount: TextView = view.findViewById(R.id.answer_count_question)
             internal val viewCount: TextView = view.findViewById(R.id.view_count_question)
-            internal val tagHolder: LinearLayout = view.findViewById(R.id.chip_tag_holder)
+            internal val tagHolder: TextView = view.findViewById(R.id.textview_tag_holder)
             internal val timesAgo: TextView = view.findViewById(R.id.textview_times_ago_question)
         }
     }

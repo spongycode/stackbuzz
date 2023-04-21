@@ -12,7 +12,6 @@ class ApiRepository {
     var questionsLiveData = MutableLiveData<Response<QuestionResponse>>()
 
     fun getQuestions(): LiveData<Response<QuestionResponse>> {
-        Log.d("QUESTIONS", "it".toString())
 
         val agentLeadsService: Call<QuestionResponse> =
             ApiService.Companion.create().getQuestions()
