@@ -68,16 +68,26 @@
                 app:layout_constraintStart_toEndOf="@+id/cv_question"
                 app:layout_constraintTop_toTopOf="@+id/cv_question" />
 
+            <TextView
+                android:id="@+id/textview_times_ago_question"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="10dp"
+                android:text="times ago"
+                android:textColor="@color/gray"
+                android:textSize="12sp"
+                app:layout_constraintEnd_toEndOf="@+id/title_question"
+                app:layout_constraintTop_toBottomOf="@+id/title_question" />
+
             <LinearLayout
                 android:id="@+id/chip_tag_holder"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="15dp"
-                android:layout_marginTop="8dp"
                 android:orientation="vertical"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/cv_question"
-                app:layout_constraintTop_toBottomOf="@+id/title_question" />
+                app:layout_constraintTop_toBottomOf="@+id/textview_times_ago_question" />
 
             <ImageView
                 android:id="@+id/imageView2"

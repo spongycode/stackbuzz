@@ -7,7 +7,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.GET
 
 interface ApiService {
-    @GET("2.3/questions?page=10&pagesize=100&order=desc&sort=creation&site=stackoverflow")
+    @GET("/2.3/questions?page=1&pagesize=100&order=desc&sort=creation&site=stackoverflow")
     fun getQuestions(): Call<QuestionResponse>
 
     object Companion {

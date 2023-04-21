@@ -14,10 +14,11 @@ import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.example.stackbuzz.data.model.QuestionItem
 import com.example.stackbuzz.R
 import com.example.stackbuzz.data.api.ApiRepository
+import com.example.stackbuzz.data.model.QuestionItem
 import com.example.stackbuzz.databinding.FragmentHomeBinding
+import com.example.stackbuzz.util.HelperFunctions.getTimeAgo
 import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipDrawable
 import com.google.android.material.chip.ChipGroup
@@ -133,6 +134,8 @@ class HomeFragment : Fragment() {
 
             holder.tagHolder.removeAllViews()
             holder.tagHolder.addView(chipGroup)
+
+            holder.timesAgo.text = getTimeAgo(question.creation_date!!)
         }
 
         override fun getItemCount() = mainDiffer.currentList.size
@@ -146,6 +149,7 @@ class HomeFragment : Fragment() {
             internal val answerCount: TextView = view.findViewById(R.id.answer_count_question)
             internal val viewCount: TextView = view.findViewById(R.id.view_count_question)
             internal val tagHolder: LinearLayout = view.findViewById(R.id.chip_tag_holder)
+            internal val timesAgo: TextView = view.findViewById(R.id.textview_times_ago_question)
         }
     }
 }
