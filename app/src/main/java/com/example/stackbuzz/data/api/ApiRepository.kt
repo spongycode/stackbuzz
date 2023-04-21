@@ -10,6 +10,7 @@ import retrofit2.Response
 
 class ApiRepository {
     var questionsLiveData = MutableLiveData<Response<QuestionResponse>>()
+    var searchResultsLiveData = MutableLiveData<Response<QuestionResponse>>()
 
     fun getQuestions(): LiveData<Response<QuestionResponse>> {
 
@@ -20,7 +21,7 @@ class ApiRepository {
                 call: Call<QuestionResponse>,
                 response: Response<QuestionResponse>
             ) {
-                questionsLiveData.setValue(response)
+                questionsLiveData.value = response
             }
 
             override fun onFailure(call: Call<QuestionResponse>, t: Throwable) {
@@ -30,4 +31,23 @@ class ApiRepository {
         return questionsLiveData
     }
 
+
+    fun getSearchResults(queryText: String): LiveData<Response<QuestionResponse>> {
+
+        val agentLeadsService: Call<QuestionResponse> =
+            ApiService.Companion.create().getSearchResults(queryText)
+        agentLeadsService.enqueue(object : Callback<QuestionResponse> {
+            override fun onResponse(
+                call: Call<QuestionResponse>,
+                response: Response<QuestionResponse>
+            ) {
+                searchResultsLiveData.value = response
+            }
+
+            override fun onFailure(call: Call<QuestionResponse>, t: Throwable) {
+                Log.d("Repo Failure", t.toString())
+            }
+        })
+        return searchResultsLiveData
+    }
 }

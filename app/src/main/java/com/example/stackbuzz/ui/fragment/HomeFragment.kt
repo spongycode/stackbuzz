@@ -1,6 +1,5 @@
 package com.example.stackbuzz.ui.fragment
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Bundle
 import android.util.Log
@@ -90,7 +89,6 @@ class HomeFragment : Fragment() {
             return ViewHolder(view)
         }
 
-        @SuppressLint("SetJavaScriptEnabled")
         override fun onBindViewHolder(holder: ViewHolder, position: Int) {
             val question: QuestionItem = mainDiffer.currentList[position]
             holder.title.text = question.title
