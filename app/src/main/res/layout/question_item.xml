@@ -69,7 +69,7 @@
                 app:layout_constraintTop_toTopOf="@+id/cv_question" />
 
             <LinearLayout
-                android:id="@+id/option_holder"
+                android:id="@+id/chip_tag_holder"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="15dp"
@@ -85,8 +85,8 @@
                 android:layout_height="20dp"
                 android:layout_marginLeft="30dp"
                 android:background="@drawable/baseline_recommend_24"
-                app:layout_constraintStart_toStartOf="@+id/option_holder"
-                app:layout_constraintTop_toBottomOf="@+id/option_holder" />
+                app:layout_constraintStart_toStartOf="@+id/chip_tag_holder"
+                app:layout_constraintTop_toBottomOf="@+id/chip_tag_holder" />
 
             <TextView
                 android:id="@+id/score_question"
@@ -106,7 +106,7 @@
                 android:background="@drawable/baseline_comment_24"
                 app:layout_constraintEnd_toStartOf="@+id/imageView3"
                 app:layout_constraintStart_toEndOf="@+id/imageView2"
-                app:layout_constraintTop_toBottomOf="@+id/option_holder" />
+                app:layout_constraintTop_toBottomOf="@+id/chip_tag_holder" />
 
             <TextView
                 android:id="@+id/answer_count_question"
@@ -125,8 +125,8 @@
                 android:layout_height="20dp"
                 android:layout_marginRight="30dp"
                 android:background="@drawable/baseline_remove_red_eye_24"
-                app:layout_constraintEnd_toEndOf="@+id/option_holder"
-                app:layout_constraintTop_toBottomOf="@+id/option_holder" />
+                app:layout_constraintEnd_toEndOf="@+id/chip_tag_holder"
+                app:layout_constraintTop_toBottomOf="@+id/chip_tag_holder" />
 
 
             <TextView
