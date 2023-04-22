@@ -16,7 +16,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.stackbuzz.R
 import com.example.stackbuzz.data.api.ApiRepository
-import com.example.stackbuzz.data.model.QuestionItem
+import com.example.stackbuzz.data.model.Question
 import com.example.stackbuzz.databinding.FragmentSearchBinding
 import com.example.stackbuzz.util.HelperFunctions
 import com.google.android.material.bottomnavigation.BottomNavigationView
@@ -27,7 +27,7 @@ class SearchFragment : Fragment() {
     private var _binding: FragmentSearchBinding? = null
     private val binding get() = _binding!!
 
-    private val questionList = mutableListOf<QuestionItem>()
+    private val questionList = mutableListOf<Question>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -43,7 +43,7 @@ class SearchFragment : Fragment() {
             .editText
             .setOnEditorActionListener { v, actionId, event ->
                 binding.searchBar.text = binding.searchView.text
-                observeSearchResults(binding.searchBar.text.toString())
+                observeSearchResults(binding.searchBar.text.toString(), requireContext())
                 binding.searchView.hide()
                 false
             }
@@ -51,9 +51,9 @@ class SearchFragment : Fragment() {
         return binding.root
     }
 
-    private fun observeSearchResults(queryText: String) {
+    private fun observeSearchResults(queryText: String, context: Context) {
         val questionAdapter = SearchRecyclerAdapter(requireContext())
-        ApiRepository().getSearchResults(queryText).observe(viewLifecycleOwner) {
+        ApiRepository(context).getSearchResults(queryText).observe(viewLifecycleOwner) {
             questionList.clear()
             for (question in it.body()!!.items!!) {
                 questionList.add(question)
@@ -70,12 +70,12 @@ class SearchFragment : Fragment() {
     ) :
         RecyclerView.Adapter<SearchRecyclerAdapter.ViewHolder>() {
 
-        private val mainDiffUtil = object : DiffUtil.ItemCallback<QuestionItem>() {
-            override fun areItemsTheSame(oldItem: QuestionItem, newItem: QuestionItem): Boolean {
+        private val mainDiffUtil = object : DiffUtil.ItemCallback<Question>() {
+            override fun areItemsTheSame(oldItem: Question, newItem: Question): Boolean {
                 return oldItem.title == newItem.title
             }
 
-            override fun areContentsTheSame(oldItem: QuestionItem, newItem: QuestionItem): Boolean {
+            override fun areContentsTheSame(oldItem: Question, newItem: Question): Boolean {
                 return oldItem.title == newItem.title
             }
         }
@@ -92,7 +92,7 @@ class SearchFragment : Fragment() {
         }
 
         override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-            val question: QuestionItem = mainDiffer.currentList[position]
+            val question: Question = mainDiffer.currentList[position]
             holder.title.text = question.title
             holder.username.text = question.owner!!.display_name + " · "
             holder.score.text = question.score.toString()

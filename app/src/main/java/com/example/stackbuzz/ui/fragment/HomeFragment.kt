@@ -2,7 +2,6 @@ package com.example.stackbuzz.ui.fragment
 
 import android.content.Context
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.GONE
@@ -11,24 +10,26 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.cardview.widget.CardView
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.stackbuzz.R
 import com.example.stackbuzz.data.api.ApiRepository
-import com.example.stackbuzz.data.model.QuestionItem
+import com.example.stackbuzz.data.model.Question
 import com.example.stackbuzz.databinding.FragmentHomeBinding
 import com.example.stackbuzz.util.HelperFunctions.getTimeAgo
 import com.google.android.material.bottomnavigation.BottomNavigationView
 
 
 class HomeFragment : Fragment() {
-
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
 
-    private val questionList = mutableListOf<QuestionItem>()
+    private val viewModel: HomeViewModel by viewModels {
+        HomeViewModelFactory(ApiRepository(requireContext()))
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -41,10 +42,6 @@ class HomeFragment : Fragment() {
     ): View {
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
 
-
-//        questionList.add(QuestionItem(title = "Question 1"))
-//        questionList.add(QuestionItem(title = "Question 2"))
-
         observeQuestions()
 
         return binding.root
@@ -52,14 +49,9 @@ class HomeFragment : Fragment() {
 
     private fun observeQuestions() {
         val questionAdapter = HomeRecyclerAdapter(requireContext())
-        ApiRepository().getQuestions().observe(viewLifecycleOwner) {
-            for (question in it.body()!!.items!!) {
-                questionList.add(question)
-            }
-            Log.d("QUESTIONS", it.body().toString())
-            binding.rvQuestion.adapter = questionAdapter
-            questionAdapter.mainDiffer.submitList(questionList)
-            binding.rvQuestion.adapter?.notifyDataSetChanged()
+        binding.rvQuestion.adapter = questionAdapter
+        viewModel.questions.observe(viewLifecycleOwner) { result ->
+            questionAdapter.mainDiffer.submitList(result.data)
         }
     }
 
@@ -68,12 +60,12 @@ class HomeFragment : Fragment() {
     ) :
         RecyclerView.Adapter<HomeRecyclerAdapter.ViewHolder>() {
 
-        private val mainDiffUtil = object : DiffUtil.ItemCallback<QuestionItem>() {
-            override fun areItemsTheSame(oldItem: QuestionItem, newItem: QuestionItem): Boolean {
+        private val mainDiffUtil = object : DiffUtil.ItemCallback<Question>() {
+            override fun areItemsTheSame(oldItem: Question, newItem: Question): Boolean {
                 return oldItem.title == newItem.title
             }
 
-            override fun areContentsTheSame(oldItem: QuestionItem, newItem: QuestionItem): Boolean {
+            override fun areContentsTheSame(oldItem: Question, newItem: Question): Boolean {
                 return oldItem.title == newItem.title
             }
         }
@@ -90,7 +82,7 @@ class HomeFragment : Fragment() {
         }
 
         override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-            val question: QuestionItem = mainDiffer.currentList[position]
+            val question: Question = mainDiffer.currentList[position]
             holder.title.text = question.title
             holder.username.text = question.owner!!.display_name + " · "
             holder.score.text = question.score.toString()
