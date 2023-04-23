@@ -1,20 +1,17 @@
 package com.example.stackbuzz.data.api
 
 import android.content.Context
-import android.util.Log
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.room.Room
 import androidx.room.withTransaction
 import com.example.stackbuzz.data.local.QuestionDatabase
-import com.example.stackbuzz.data.model.QuestionResponse
+import com.example.stackbuzz.data.model.Question
+import com.example.stackbuzz.util.Resource
 import com.example.stackbuzz.util.networkBoundResource
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 
 class ApiRepository(context: Context) {
-    var searchResultsLiveData = MutableLiveData<Response<QuestionResponse>>()
+    private val apiService = ApiService.Companion.create()
 
     private val db =
         Room.databaseBuilder(context, QuestionDatabase::class.java, "question_database")
@@ -25,7 +22,7 @@ class ApiRepository(context: Context) {
             questionDao.getAllQuestions()
         },
         fetch = {
-            ApiService.Companion.create().getQuestions()
+            apiService.getQuestions()
         },
         saveFetchResult = { questions ->
             db.withTransaction {
@@ -36,22 +33,13 @@ class ApiRepository(context: Context) {
         }
     )
 
-    fun getSearchResults(queryText: String): LiveData<Response<QuestionResponse>> {
-
-        val agentLeadsService: Call<QuestionResponse> =
-            ApiService.Companion.create().getSearchResults(queryText)
-        agentLeadsService.enqueue(object : Callback<QuestionResponse> {
-            override fun onResponse(
-                call: Call<QuestionResponse>,
-                response: Response<QuestionResponse>
-            ) {
-                searchResultsLiveData.value = response
-            }
-
-            override fun onFailure(call: Call<QuestionResponse>, t: Throwable) {
-                Log.d("Repo Failure", t.toString())
-            }
-        })
-        return searchResultsLiveData
+    fun getSearchResults(queryText: String): Flow<Resource<List<Question>>> = flow {
+        emit(Resource.Loading())
+        try {
+            val searchResults = apiService.getSearchResults(queryText).items
+            emit(Resource.Success(searchResults!!))
+        } catch (throwable: Throwable) {
+            emit(Resource.Error(throwable))
+        }
     }
 }

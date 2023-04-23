@@ -1,7 +1,11 @@
 package com.example.stackbuzz.util
 
+import android.content.Context
 import android.os.Build
+import android.view.View
+import android.view.inputmethod.InputMethodManager
 import androidx.annotation.RequiresApi
+import androidx.fragment.app.Fragment
 import java.time.Duration
 import java.time.Instant
 import java.time.LocalDateTime
@@ -30,6 +34,11 @@ object HelperFunctions {
             duration.toMinutes() >= 1 -> "${duration.toMinutes()} min${if (duration.toMinutes() > 1) "s" else ""} ago"
             else -> "${duration.seconds} sec${if (duration.seconds > 1) "s" else ""} ago"
         }
+    }
+
+    fun hideKeyboard(context: Context, view: View?) {
+        val imm = context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        imm.hideSoftInputFromWindow(view?.windowToken, 0)
     }
 
 }

@@ -1,15 +1,18 @@
 package com.example.stackbuzz.ui.fragment
 
 import android.content.Context
+import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.EditorInfo
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.annotation.RequiresApi
 import androidx.cardview.widget.CardView
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
@@ -26,11 +29,8 @@ class SearchFragment : Fragment() {
 
     private var _binding: FragmentSearchBinding? = null
     private val binding get() = _binding!!
-
-    private val questionList = mutableListOf<Question>()
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+    private val viewModel: SearchViewModel by viewModels {
+        SearchViewModelFactory(ApiRepository(requireContext()))
     }
 
     override fun onCreateView(
@@ -39,31 +39,37 @@ class SearchFragment : Fragment() {
     ): View {
         _binding = FragmentSearchBinding.inflate(inflater, container, false)
 
-        binding.searchView
-            .editText
-            .setOnEditorActionListener { v, actionId, event ->
-                binding.searchBar.text = binding.searchView.text
-                observeSearchResults(binding.searchBar.text.toString(), requireContext())
-                binding.searchView.hide()
+        if (viewModel.editTextValue.isNotEmpty()) binding.etSearch.setText(viewModel.editTextValue)
+        observeSearchResults()
+        binding.btnSearch.setOnClickListener {
+            startSearch()
+        }
+
+        binding.etSearch.setOnEditorActionListener { _, actionId, _ ->
+            if (actionId == EditorInfo.IME_ACTION_DONE) {
+                startSearch()
+                true
+            } else {
                 false
             }
-
+        }
         return binding.root
     }
 
-    private fun observeSearchResults(queryText: String, context: Context) {
+    private fun startSearch() {
+        viewModel.editTextValue = binding.etSearch.text.toString()
+        viewModel.searchQuery(binding.etSearch.text.toString())
+        HelperFunctions.hideKeyboard(requireContext(), binding.etSearch)
+    }
+
+    private fun observeSearchResults() {
         val questionAdapter = SearchRecyclerAdapter(requireContext())
-        ApiRepository(context).getSearchResults(queryText).observe(viewLifecycleOwner) {
-            questionList.clear()
-            for (question in it.body()!!.items!!) {
-                questionList.add(question)
-            }
-            Log.d("QUESTIONS", it.body().toString())
-            binding.rvSearch.adapter = questionAdapter
-            questionAdapter.mainDiffer.submitList(questionList)
-            binding.rvSearch.adapter?.notifyDataSetChanged()
+        binding.rvSearch.adapter = questionAdapter
+        viewModel.questions.observe(viewLifecycleOwner) { questions ->
+            questionAdapter.mainDiffer.submitList(questions.data)
         }
     }
+
 
     inner class SearchRecyclerAdapter(
         private val context: Context
@@ -91,6 +97,7 @@ class SearchFragment : Fragment() {
             return ViewHolder(view)
         }
 
+        @RequiresApi(Build.VERSION_CODES.O)
         override fun onBindViewHolder(holder: ViewHolder, position: Int) {
             val question: Question = mainDiffer.currentList[position]
             holder.title.text = question.title

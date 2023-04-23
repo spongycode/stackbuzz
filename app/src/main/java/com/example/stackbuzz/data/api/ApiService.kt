@@ -1,7 +1,6 @@
 package com.example.stackbuzz.data.api
 
 import com.example.stackbuzz.data.model.QuestionResponse
-import retrofit2.Call
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.GET
@@ -11,8 +10,8 @@ interface ApiService {
     @GET("2.3/questions?page=1&pagesize=100&order=desc&sort=creation&site=stackoverflow")
     suspend fun getQuestions(): QuestionResponse
 
-    @GET("2.3/search/advanced?page=1&pagesize=100&order=desc&sort=activity&site=stackoverflow")
-    fun getSearchResults(@Query("q") queryText: String): Call<QuestionResponse>
+    @GET("2.3/search/advanced?page=1&pagesize=100&order=desc&sort=creation&site=stackoverflow")
+    suspend fun getSearchResults(@Query("q") queryText: String): QuestionResponse
 
     object Companion {
         private const val BASE_URL = "https://api.stackexchange.com/"

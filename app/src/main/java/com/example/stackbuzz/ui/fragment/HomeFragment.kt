@@ -1,6 +1,7 @@
 package com.example.stackbuzz.ui.fragment
 
 import android.content.Context
+import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -8,6 +9,7 @@ import android.view.View.GONE
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.annotation.RequiresApi
 import androidx.cardview.widget.CardView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -29,11 +31,6 @@ class HomeFragment : Fragment() {
 
     private val viewModel: HomeViewModel by viewModels {
         HomeViewModelFactory(ApiRepository(requireContext()))
-    }
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
     }
 
     override fun onCreateView(
@@ -81,6 +78,7 @@ class HomeFragment : Fragment() {
             return ViewHolder(view)
         }
 
+        @RequiresApi(Build.VERSION_CODES.O)
         override fun onBindViewHolder(holder: ViewHolder, position: Int) {
             val question: Question = mainDiffer.currentList[position]
             holder.title.text = question.title
