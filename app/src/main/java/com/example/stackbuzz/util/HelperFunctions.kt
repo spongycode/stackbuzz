@@ -1,21 +1,34 @@
 package com.example.stackbuzz.util
 
-import android.util.Log
+import android.os.Build
+import androidx.annotation.RequiresApi
+import java.time.Duration
+import java.time.Instant
+import java.time.LocalDateTime
+import java.time.ZoneId
+import java.time.format.DateTimeFormatter
 
 object HelperFunctions {
 
-    fun getTimeAgo(unixTime: Long): String {
-        val now = System.currentTimeMillis() / 1000
-        Log.d("time", now.toString())
-        val seconds = now - unixTime
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun getTimeAgo(unixTimestamp: Long): String {
+        val now = LocalDateTime.now()
+        val dateTime =
+            LocalDateTime.ofInstant(Instant.ofEpochSecond(unixTimestamp), ZoneId.systemDefault())
+        val duration = Duration.between(dateTime, now)
 
-        return when {
-            seconds < 60 -> "${seconds}s"
-            seconds < 60 * 60 -> "${seconds / 60}m"
-            seconds < 60 * 60 * 24 -> "${seconds / (60 * 60)}h"
-            seconds < 60 * 60 * 24 * 30 -> "${seconds / (60 * 60 * 24)}d"
-            seconds < 60 * 60 * 24 * 365 -> "${seconds / (60 * 60 * 24 * 30)}mth"
-            else -> "${seconds / (60 * 60 * 24 * 365)}yr"
+        return "asked " + when {
+            duration.toDays() > 2 -> {
+                val pattern =
+                    if (dateTime.year == now.year) "MMM d 'at' HH:mm" else "MMM d, yyyy 'at' HH:mm"
+                val formatter = DateTimeFormatter.ofPattern(pattern)
+                dateTime.format(formatter)
+            }
+
+            duration.toDays() >= 1 -> if (duration.toDays() > 1) "${duration.toDays()} days" else "yesterday"
+            duration.toHours() >= 1 -> "${duration.toHours()} hour${if (duration.toHours() > 1) "s" else ""} ago"
+            duration.toMinutes() >= 1 -> "${duration.toMinutes()} min${if (duration.toMinutes() > 1) "s" else ""} ago"
+            else -> "${duration.seconds} sec${if (duration.seconds > 1) "s" else ""} ago"
         }
     }
 
