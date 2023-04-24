@@ -1,5 +1,6 @@
 package com.example.stackbuzz.ui.fragment
 
+import android.app.AlertDialog
 import android.content.Context
 import android.os.Build
 import android.os.Bundle
@@ -23,6 +24,9 @@ import com.example.stackbuzz.data.model.Question
 import com.example.stackbuzz.databinding.FragmentSearchBinding
 import com.example.stackbuzz.util.HelperFunctions
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.android.material.chip.Chip
+import com.google.android.material.chip.ChipDrawable
+import com.google.android.material.chip.ChipGroup
 
 
 class SearchFragment : Fragment() {
@@ -32,6 +36,11 @@ class SearchFragment : Fragment() {
     private val viewModel: SearchViewModel by viewModels {
         SearchViewModelFactory(ApiRepository(requireContext()))
     }
+    lateinit var dialogView: View
+    private var currQuestions = listOf<Question>()
+
+    private lateinit var chipGroup: ChipGroup
+    private lateinit var questionAdapter: SearchFragment.SearchRecyclerAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -39,8 +48,17 @@ class SearchFragment : Fragment() {
     ): View {
         _binding = FragmentSearchBinding.inflate(inflater, container, false)
 
+        dialogView = layoutInflater.inflate(R.layout.dialog_tags, null)
+        chipGroup = dialogView.findViewById(R.id.chip_group)
+
+        questionAdapter = SearchRecyclerAdapter(requireContext())
+        binding.rvSearch.adapter = questionAdapter
+
         if (viewModel.editTextValue.isNotEmpty()) binding.etSearch.setText(viewModel.editTextValue)
-        observeSearchResults()
+
+        observeFilteredQuestions()
+        observeTags()
+
         binding.btnSearch.setOnClickListener {
             startSearch()
         }
@@ -53,7 +71,31 @@ class SearchFragment : Fragment() {
                 false
             }
         }
+
+        binding.btnFilter.setOnClickListener {
+            showTagDialog()
+        }
         return binding.root
+    }
+
+
+    private fun showTagDialog() {
+        if (dialogView.parent != null) {
+            (dialogView.parent as ViewGroup).removeView(dialogView)
+        }
+        AlertDialog.Builder(requireContext())
+            .setTitle("Select Tags")
+            .setView(dialogView)
+            .setPositiveButton("OK") { dialog, _ ->
+                viewModel.filterQuery()
+                dialog.dismiss()
+            }
+            .setNegativeButton("Cancel") { dialog, _ ->
+                dialog.dismiss()
+            }
+            .create()
+            .show()
+
     }
 
     private fun startSearch() {
@@ -62,14 +104,56 @@ class SearchFragment : Fragment() {
         HelperFunctions.hideKeyboard(requireContext(), binding.etSearch)
     }
 
-    private fun observeSearchResults() {
-        val questionAdapter = SearchRecyclerAdapter(requireContext())
-        binding.rvSearch.adapter = questionAdapter
-        viewModel.questions.observe(viewLifecycleOwner) { questions ->
-            questionAdapter.mainDiffer.submitList(questions.data)
+    private fun observeFilteredQuestions() {
+        viewModel.filteredQuestions.observe(viewLifecycleOwner) { questions ->
+            currQuestions = questions
+            questionAdapter.mainDiffer.submitList(questions)
         }
     }
 
+    private fun observeTags() {
+        viewModel.tagsList.observe(viewLifecycleOwner) { chipTexts ->
+            updateChipGroup(chipTexts)
+        }
+    }
+
+    private fun updateChipGroup(chipTexts: MutableList<String>?) {
+        chipGroup.removeAllViews()
+        if (chipTexts != null) {
+            for (chipText in chipTexts) {
+                val chip = createChip(chipText)
+                setupChipListener(chip)
+                chipGroup.addView(chip)
+            }
+        }
+    }
+
+    private fun setupChipListener(chip: Chip) {
+        chip.setOnCheckedChangeListener { button, isChecked ->
+            val chipText = button.text.toString()
+            if (isChecked) {
+                viewModel.selectedChips.value?.add(chipText)
+            } else {
+                viewModel.selectedChips.value?.remove(chipText)
+            }
+        }
+    }
+
+    private fun createChip(chipText: String): Chip {
+        val chip = Chip(context)
+        chip.text = chipText
+        chip.isCheckable = true
+        chip.setChipDrawable(
+            ChipDrawable.createFromAttributes(
+                requireContext(),
+                null,
+                0,
+                com.google.android.material.R.style.Widget_Material3_Chip_Filter
+            )
+        )
+        chip.isChecked = viewModel.selectedChips.value?.contains(chipText) ?: false
+        return chip
+    }
 
     inner class SearchRecyclerAdapter(
         private val context: Context
@@ -83,6 +167,14 @@ class SearchFragment : Fragment() {
 
             override fun areContentsTheSame(oldItem: Question, newItem: Question): Boolean {
                 return oldItem.title == newItem.title
+            }
+
+            override fun getChangePayload(oldItem: Question, newItem: Question): Any? {
+                val diffBundle = Bundle()
+                if (oldItem.title != newItem.title) {
+                    diffBundle.putString("title", newItem.title)
+                }
+                return if (diffBundle.isEmpty) null else diffBundle
             }
         }
 
