@@ -22,6 +22,8 @@ import com.example.stackbuzz.data.api.ApiRepository
 import com.example.stackbuzz.data.model.Question
 import com.example.stackbuzz.databinding.FragmentHomeBinding
 import com.example.stackbuzz.util.HelperFunctions.getTimeAgo
+import com.google.android.gms.ads.AdRequest
+import com.google.android.gms.ads.AdView
 import com.google.android.material.bottomnavigation.BottomNavigationView
 
 
@@ -55,7 +57,10 @@ class HomeFragment : Fragment() {
     inner class HomeRecyclerAdapter(
         private val context: Context
     ) :
-        RecyclerView.Adapter<HomeRecyclerAdapter.ViewHolder>() {
+        RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+
+        private val ITEM_VIEW_TYPE_QUESTION = 0
+        private val ITEM_VIEW_TYPE_AD = 1
 
         private val mainDiffUtil = object : DiffUtil.ItemCallback<Question>() {
             override fun areItemsTheSame(oldItem: Question, newItem: Question): Boolean {
@@ -69,58 +74,83 @@ class HomeFragment : Fragment() {
 
         val mainDiffer = AsyncListDiffer(this, mainDiffUtil)
 
-        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-            val view = LayoutInflater.from(parent.context).inflate(
-                R.layout.question_item,
-                parent,
-                false
-            )
-            return ViewHolder(view)
+        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+            return if (viewType == ITEM_VIEW_TYPE_QUESTION) {
+                val view = LayoutInflater.from(parent.context).inflate(
+                    R.layout.question_item,
+                    parent,
+                    false
+                )
+                ViewHolder(view)
+            } else {
+                val view = LayoutInflater.from(parent.context).inflate(
+                    R.layout.ad_item,
+                    parent,
+                    false
+                )
+                AdViewHolder(view)
+            }
         }
 
         @RequiresApi(Build.VERSION_CODES.O)
-        override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-            val question: Question = mainDiffer.currentList[position]
-            holder.title.text = question.title
-            holder.username.text = question.owner!!.display_name + " · "
-            holder.score.text = question.score.toString()
-            holder.answerCount.text = question.answer_count.toString()
-            holder.viewCount.text = question.view_count.toString()
-            Glide
-                .with(context)
-                .load(question.owner.profile_image)
-                .centerCrop()
-                .placeholder(R.drawable.profile_pic)
-                .into(holder.image)
+        override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+            if (getItemViewType(position) == ITEM_VIEW_TYPE_QUESTION) {
+                val question: Question = mainDiffer.currentList[position - (position / 6)]
+                val questionHolder = holder as ViewHolder
+                questionHolder.title.text = question.title
+                questionHolder.username.text = question.owner!!.display_name + " · "
+                questionHolder.score.text = question.score.toString()
+                questionHolder.answerCount.text = question.answer_count.toString()
+                questionHolder.viewCount.text = question.view_count.toString()
+                Glide
+                    .with(context)
+                    .load(question.owner.profile_image)
+                    .centerCrop()
+                    .placeholder(R.drawable.profile_pic)
+                    .into(questionHolder.image)
 
-            var tags = ""
-            for (tag in question.tags!!) {
-                tags += "#${tag} "
-            }
-
-            holder.tagHolder.text = tags
-
-            holder.timesAgo.text = getTimeAgo(question.creation_date!!)
-
-            holder.mainContainer.setOnClickListener {
-                activity!!
-                    .supportFragmentManager
-                    .beginTransaction().apply {
-                        replace(
-                            R.id.fragmentContainerView,
-                            WebViewFragment.newInstance(question.link.toString())
-                        )
-                        addToBackStack(null)
-                        commit()
-                    }
-                val view = activity?.findViewById<BottomNavigationView>(R.id.bottom_navigation)
-                if (view != null) {
-                    view.visibility = GONE
+                var tags = ""
+                for (tag in question.tags!!) {
+                    tags += "#${tag} "
                 }
+
+                questionHolder.tagHolder.text = tags
+
+                questionHolder.timesAgo.text = getTimeAgo(question.creation_date!!)
+
+                questionHolder.mainContainer.setOnClickListener {
+                    activity!!
+                        .supportFragmentManager
+                        .beginTransaction().apply {
+                            replace(
+                                R.id.fragmentContainerView,
+                                WebViewFragment.newInstance(question.link.toString())
+                            )
+                            addToBackStack(null)
+                            commit()
+                        }
+                    val view = activity?.findViewById<BottomNavigationView>(R.id.bottom_navigation)
+                    if (view != null) {
+                        view.visibility = GONE
+                    }
+                }
+            } else {
+                val adHolder = holder as AdViewHolder
+                val adRequest = AdRequest.Builder().build()
+                adHolder.adView.loadAd(adRequest)
             }
         }
 
-        override fun getItemCount() = mainDiffer.currentList.size
+        override fun getItemCount() =
+            mainDiffer.currentList.size + (mainDiffer.currentList.size / 5)
+
+        override fun getItemViewType(position: Int): Int {
+            return if ((position + 1) % 6 == 0) {
+                ITEM_VIEW_TYPE_AD
+            } else {
+                ITEM_VIEW_TYPE_QUESTION
+            }
+        }
 
         inner class ViewHolder internal constructor(view: View) :
             RecyclerView.ViewHolder(view) {
@@ -134,5 +164,16 @@ class HomeFragment : Fragment() {
             internal val timesAgo: TextView = view.findViewById(R.id.textview_times_ago_question)
             internal val mainContainer: CardView = view.findViewById(R.id.cv_main_holder)
         }
+
+        inner class AdViewHolder internal constructor(view: View) :
+            RecyclerView.ViewHolder(view) {
+            val adView: AdView = view.findViewById(R.id.adView)
+
+            init {
+                val adRequest = AdRequest.Builder().build()
+                adView.loadAd(adRequest)
+            }
+        }
     }
+
 }

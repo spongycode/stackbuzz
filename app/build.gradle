@@ -14,7 +14,8 @@ android {
         targetSdk 33
         versionCode 1
         versionName "1.0"
-
+        resValue "string", "admob_app_id", ADMOB_APP_ID
+        resValue "string", "admob_ad_unit_id", ADMOB_AD_UNIT_ID
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -58,4 +59,7 @@ dependencies {
 
     implementation "androidx.activity:activity-ktx:1.7.1"
     implementation "androidx.fragment:fragment-ktx:1.5.7"
+
+    //Ads
+    implementation 'com.google.android.gms:play-services-ads:22.0.0'
 }
