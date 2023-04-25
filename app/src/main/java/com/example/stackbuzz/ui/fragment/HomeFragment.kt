@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.GONE
+import android.view.View.VISIBLE
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
@@ -15,6 +16,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.stackbuzz.R
@@ -42,8 +44,39 @@ class HomeFragment : Fragment() {
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
 
         observeQuestions()
-
+        binding.goUpFab.setOnClickListener {
+            scrollToTop()
+        }
+        binding.swipeRefreshLayout.setOnRefreshListener {
+            updateQuestions()
+            binding.swipeRefreshLayout.isRefreshing = false
+        }
+        addScrollListener()
+        updateQuestions()
         return binding.root
+    }
+
+    fun updateQuestions() {
+        viewModel.updateQuestions()
+    }
+
+    private fun scrollToTop() {
+        binding.rvQuestion.scrollToPosition(0)
+    }
+
+    private fun addScrollListener() {
+        binding.rvQuestion.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                super.onScrolled(recyclerView, dx, dy)
+                val layoutManager = recyclerView.layoutManager as LinearLayoutManager
+                val firstVisibleItemPosition = layoutManager.findFirstVisibleItemPosition()
+                if (firstVisibleItemPosition > 2) {
+                    binding.goUpFab.show()
+                } else {
+                    binding.goUpFab.hide()
+                }
+            }
+        })
     }
 
     private fun observeQuestions() {
@@ -51,6 +84,12 @@ class HomeFragment : Fragment() {
         binding.rvQuestion.adapter = questionAdapter
         viewModel.questions.observe(viewLifecycleOwner) { result ->
             questionAdapter.mainDiffer.submitList(result.data)
+            if (viewModel.refreshing.value == null || viewModel.refreshing.value == true) {
+                binding.linearProgressIndicator.visibility = VISIBLE
+            } else {
+                binding.linearProgressIndicator.visibility = GONE
+            }
+            scrollToTop()
         }
     }
 

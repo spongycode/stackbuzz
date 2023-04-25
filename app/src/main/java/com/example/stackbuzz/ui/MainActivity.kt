@@ -27,6 +27,8 @@ class MainActivity : AppCompatActivity() {
                     if (currentFragment != homeFragment) {
                         loadFragment(homeFragment)
                         currentFragment = homeFragment
+                    } else {
+                        homeFragment.updateQuestions()
                     }
                     true
                 }

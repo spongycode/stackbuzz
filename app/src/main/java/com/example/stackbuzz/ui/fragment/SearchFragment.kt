@@ -118,6 +118,7 @@ class SearchFragment : Fragment() {
 
                 is Resource.Success -> {
                     questionAdapter.mainDiffer.submitList(resource.data!!)
+                    binding.rvSearch.scrollToPosition(0)
                     binding.loadingContainer.visibility = View.GONE
                     binding.tvErrorMessage.visibility = View.GONE
                     binding.rvSearch.visibility = View.VISIBLE
