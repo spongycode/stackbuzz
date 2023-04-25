@@ -48,11 +48,12 @@
         app:layout_constraintTop_toBottomOf="@+id/btn_filter" />
 
     <TextView
-        android:id="@+id/textView"
+        android:id="@+id/tv_error_message"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
-        android:text="No search results :("
+        android:textColor="#0F1419"
+        android:text="Search your query above"
         android:textSize="20sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/btn_search"
@@ -85,5 +86,44 @@
         android:textColor="@color/black"
         app:layout_constraintStart_toStartOf="@+id/et_search"
         app:layout_constraintTop_toBottomOf="@+id/et_search" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/loading_container"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:background="@color/trans_black"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/view">
+
+
+        <TextView
+            android:id="@+id/tv_loading"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Loading"
+            android:textStyle="bold"
+            android:textColor="@color/white"
+            android:textSize="25sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="@+id/linearProgressIndicator"
+            app:layout_constraintStart_toStartOf="@+id/linearProgressIndicator"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.4" />
+
+        <com.google.android.material.progressindicator.LinearProgressIndicator
+            android:id="@+id/linearProgressIndicator"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="50dp"
+            android:layout_marginTop="20dp"
+            android:indeterminate="true"
+            app:layout_constraintTop_toBottomOf="@id/tv_loading"
+            app:trackThickness="6dp" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

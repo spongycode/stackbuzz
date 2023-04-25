@@ -11,6 +11,7 @@ import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.cardview.widget.CardView
 import androidx.fragment.app.Fragment
@@ -24,6 +25,7 @@ import com.example.stackbuzz.data.api.ApiRepository
 import com.example.stackbuzz.data.model.Question
 import com.example.stackbuzz.databinding.FragmentSearchBinding
 import com.example.stackbuzz.util.HelperFunctions
+import com.example.stackbuzz.util.Resource
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipDrawable
@@ -38,7 +40,6 @@ class SearchFragment : Fragment() {
         SearchViewModelFactory(ApiRepository(requireContext()))
     }
     lateinit var dialogView: View
-    private var currQuestions = listOf<Question>()
 
     private lateinit var chipGroup: ChipGroup
     private lateinit var questionAdapter: SearchFragment.SearchRecyclerAdapter
@@ -108,9 +109,32 @@ class SearchFragment : Fragment() {
     }
 
     private fun observeFilteredQuestions() {
-        viewModel.filteredQuestions.observe(viewLifecycleOwner) { questions ->
-            currQuestions = questions
-            questionAdapter.mainDiffer.submitList(questions)
+        viewModel.filteredQuestions.observe(viewLifecycleOwner) { resource ->
+            when (resource) {
+                is Resource.Loading -> {
+                    binding.loadingContainer.visibility = View.VISIBLE
+                    binding.tvErrorMessage.visibility = View.GONE
+                }
+
+                is Resource.Success -> {
+                    questionAdapter.mainDiffer.submitList(resource.data!!)
+                    binding.loadingContainer.visibility = View.GONE
+                    binding.tvErrorMessage.visibility = View.GONE
+                    binding.rvSearch.visibility = View.VISIBLE
+                    if (resource.data.isEmpty()) {
+                        binding.tvErrorMessage.text = "No results found :("
+                        binding.tvErrorMessage.visibility = View.VISIBLE
+
+                    }
+                }
+
+                is Resource.Error -> {
+                    binding.tvErrorMessage.text = viewModel.errorMessage.value
+                    binding.tvErrorMessage.visibility = View.VISIBLE
+                    binding.rvSearch.visibility = View.GONE
+                    binding.loadingContainer.visibility = View.GONE
+                }
+            }
         }
     }
 

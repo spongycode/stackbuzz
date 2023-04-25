@@ -4,30 +4,35 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.liveData
 import androidx.lifecycle.viewModelScope
 import com.example.stackbuzz.data.api.ApiRepository
 import com.example.stackbuzz.data.model.Question
 import com.example.stackbuzz.util.Resource
-import com.google.android.material.chip.Chip
 import kotlinx.coroutines.launch
 
 class SearchViewModel(private val repository: ApiRepository) : ViewModel() {
     var editTextValue = ""
     private val _allQuestions = MutableLiveData<Resource<List<Question>>>()
 
-    private val _filteredQuestions = MutableLiveData<List<Question>>()
-    val filteredQuestions: LiveData<List<Question>> = _filteredQuestions
+    private val _filteredQuestions = MutableLiveData<Resource<List<Question>>>()
+    val filteredQuestions: LiveData<Resource<List<Question>>> = _filteredQuestions
 
     private val _tagsList = MutableLiveData<MutableList<String>>()
     val tagsList: LiveData<MutableList<String>> = _tagsList
 
     val selectedChips = MutableLiveData<MutableSet<String>>(mutableSetOf())
 
+    private val _errorMessage = MutableLiveData<String>()
+    val errorMessage: LiveData<String> = _errorMessage
+
+
     fun searchQuery(queryText: String) {
         viewModelScope.launch {
             repository.getSearchResults(queryText = queryText).collect { resource ->
                 when (resource) {
                     is Resource.Loading -> {
+                        _filteredQuestions.value = Resource.Loading()
                     }
 
                     is Resource.Success -> {
@@ -41,10 +46,14 @@ class SearchViewModel(private val repository: ApiRepository) : ViewModel() {
                         newList.sort()
                         _tagsList.value = newList
                         _allQuestions.value = Resource.Success(resource.data)
-                        _filteredQuestions.value = resource.data!!
+                        _filteredQuestions.value = Resource.Success(resource.data)
                     }
 
                     is Resource.Error -> {
+                        _filteredQuestions.value = Resource.Error(Throwable(), null)
+                        _tagsList.value = mutableListOf()
+                        _allQuestions.value = Resource.Success(listOf())
+                        _errorMessage.value = resource.error?.message
                     }
                 }
             }
@@ -54,7 +63,7 @@ class SearchViewModel(private val repository: ApiRepository) : ViewModel() {
     fun filterQuery() {
         if (selectedChips.value == null || selectedChips.value?.isEmpty() == true) {
             if (_allQuestions.value != null) {
-                _filteredQuestions.value = _allQuestions.value?.data!!
+                _filteredQuestions.value = _allQuestions.value
             }
         } else {
             val updatedQuestions = mutableListOf<Question>()
@@ -66,12 +75,14 @@ class SearchViewModel(private val repository: ApiRepository) : ViewModel() {
                     }
                 }
             }
-            _filteredQuestions.value = updatedQuestions
+            _filteredQuestions.value = Resource.Success(updatedQuestions)
         }
     }
+
 }
 
-class SearchViewModelFactory(private val repository: ApiRepository) : ViewModelProvider.Factory {
+class SearchViewModelFactory(private val repository: ApiRepository) :
+    ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(SearchViewModel::class.java)) {
             @Suppress("UNCHECKED_CAST")
