@@ -36,14 +36,15 @@ class SearchViewModel(private val repository: ApiRepository) : ViewModel() {
                     }
 
                     is Resource.Success -> {
-                        val newSet = mutableSetOf<String>()
+                        val tagCountMap = mutableMapOf<String, Int>()
                         for (question in resource.data!!) {
                             for (tag in question.tags!!) {
-                                newSet.add(tag)
+                                tagCountMap[tag] = (tagCountMap[tag] ?: 0) + 1
                             }
                         }
-                        val newList = newSet.toMutableList()
-                        newList.sort()
+                        val newList =
+                            tagCountMap.entries.sortedByDescending { it.value }.map { it.key }
+                                .toMutableList()
                         _tagsList.value = newList
                         _allQuestions.value = Resource.Success(resource.data)
                         _filteredQuestions.value = Resource.Success(resource.data)
