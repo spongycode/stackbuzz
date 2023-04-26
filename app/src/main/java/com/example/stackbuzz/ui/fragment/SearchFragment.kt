@@ -125,27 +125,27 @@ class SearchFragment : Fragment() {
         viewModel.filteredQuestions.observe(viewLifecycleOwner) { resource ->
             when (resource) {
                 is Resource.Loading -> {
-                    binding.loadingContainer.visibility = View.VISIBLE
-                    binding.tvErrorMessage.visibility = View.GONE
+                    binding.loadingContainer.visibility = VISIBLE
+                    binding.tvErrorMessage.visibility = GONE
                 }
 
                 is Resource.Success -> {
                     questionAdapter.mainDiffer.submitList(resource.data!!)
                     binding.rvSearch.scrollToPosition(0)
-                    binding.loadingContainer.visibility = View.GONE
-                    binding.tvErrorMessage.visibility = View.GONE
-                    binding.rvSearch.visibility = View.VISIBLE
+                    binding.loadingContainer.visibility = GONE
+                    binding.tvErrorMessage.visibility = GONE
+                    binding.rvSearch.visibility = VISIBLE
                     if (resource.data.isEmpty()) {
                         binding.tvErrorMessage.text = "No results found :("
-                        binding.tvErrorMessage.visibility = View.VISIBLE
+                        binding.tvErrorMessage.visibility = VISIBLE
                     }
                 }
 
                 is Resource.Error -> {
                     binding.tvErrorMessage.text = viewModel.errorMessage.value
-                    binding.tvErrorMessage.visibility = View.VISIBLE
-                    binding.rvSearch.visibility = View.GONE
-                    binding.loadingContainer.visibility = View.GONE
+                    binding.tvErrorMessage.visibility = VISIBLE
+                    binding.rvSearch.visibility = GONE
+                    binding.loadingContainer.visibility = GONE
                 }
             }
             scrollToTop()
@@ -291,7 +291,7 @@ class SearchFragment : Fragment() {
                     }
                 val view = activity?.findViewById<BottomNavigationView>(R.id.bottom_navigation)
                 if (view != null) {
-                    view.visibility = View.GONE
+                    view.visibility = GONE
                 }
             }
         }
