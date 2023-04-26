@@ -4,9 +4,12 @@ import android.app.AlertDialog
 import android.content.Context
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
+import android.view.View.GONE
+import android.view.View.VISIBLE
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.widget.ImageView
@@ -150,9 +153,19 @@ class SearchFragment : Fragment() {
         }
     }
 
+    private fun showHideFilterBtn() {
+        if (viewModel.tagsList.value.isNullOrEmpty()) {
+            binding.btnFilter.visibility = GONE
+        } else {
+            binding.btnFilter.visibility = VISIBLE
+        }
+    }
+
     private fun observeTags() {
-        viewModel.tagsList.observe(viewLifecycleOwner) { chipTexts ->
-            updateChipGroup(chipTexts)
+        showHideFilterBtn()
+        viewModel.tagsList.observe(viewLifecycleOwner) { tag ->
+            updateChipGroup(tag)
+            showHideFilterBtn()
         }
     }
 
@@ -202,7 +215,7 @@ class SearchFragment : Fragment() {
                 requireContext(),
                 null,
                 0,
-                com.google.android.material.R.style.Widget_Material3_Chip_Filter
+                R.style.CustomChipStyle
             )
         )
         chip.isChecked = viewModel.selectedChips.value?.contains(chipText) ?: false

@@ -3,9 +3,17 @@
     <style name="Base.Theme.StackBuzz" parent="Theme.Material3.DayNight.NoActionBar">
         <!-- Customize your light theme here. -->
         <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
-        <item name="android:statusBarColor">@color/brand_status</item>
+        <item name="android:statusBarColor">@color/brand_light_blue</item>
         <item name="android:windowLightStatusBar">true</item>
     </style>
 
     <style name="Theme.StackBuzz" parent="Base.Theme.StackBuzz" />
+
+    <style name="CustomChipStyle" parent="Widget.MaterialComponents.Chip.Filter">
+        <item name="chipBackgroundColor">@color/chip_background_color</item>
+        <item name="chipStrokeColor">@color/black</item>
+        <item name="chipStrokeWidth">1dp</item>
+        <item name="android:textColor">@color/black</item>
+        <item name="chipIconTint">@color/white</item>
+    </style>
 </resources>
