@@ -1,10 +1,12 @@
 package com.example.stackbuzz.ui.fragment
 
 import android.app.AlertDialog
+import android.app.Dialog
 import android.content.Context
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
@@ -12,9 +14,9 @@ import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
+import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
-import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.cardview.widget.CardView
 import androidx.fragment.app.Fragment
@@ -96,19 +98,16 @@ class SearchFragment : Fragment() {
         if (dialogView.parent != null) {
             (dialogView.parent as ViewGroup).removeView(dialogView)
         }
-        AlertDialog.Builder(requireContext())
-            .setTitle("Select Tags")
-            .setView(dialogView)
-            .setPositiveButton("OK") { dialog, _ ->
-                viewModel.filterQuery()
-                dialog.dismiss()
-            }
-            .setNegativeButton("Cancel") { dialog, _ ->
-                dialog.dismiss()
-            }
-            .create()
-            .show()
-
+        val builder = AlertDialog.Builder(requireContext())
+        val dialog: Dialog = builder.setView(dialogView).create()
+        dialogView.findViewById<Button>(R.id.dialog_ok_button).setOnClickListener {
+            viewModel.filterQuery()
+            dialog.dismiss()
+        }
+        dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        dialogView.findViewById<Button>(R.id.dialog_cancel_button)
+            .setOnClickListener { dialog.dismiss() }
+        dialog.show()
     }
 
     private fun startSearch() {
