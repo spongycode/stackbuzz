@@ -1,5 +1,6 @@
-package com.example.stackbuzz.util
+package com.example.stackbuzz.helpers
 
+import com.example.stackbuzz.data.utils.Resource
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.first

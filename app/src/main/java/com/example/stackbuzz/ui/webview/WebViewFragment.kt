@@ -1,4 +1,4 @@
-package com.example.stackbuzz.ui.fragment
+package com.example.stackbuzz.ui.webview
 
 import android.os.Bundle
 import android.view.KeyEvent

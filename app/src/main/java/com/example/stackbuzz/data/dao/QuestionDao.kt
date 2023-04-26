@@ -1,4 +1,4 @@
-package com.example.stackbuzz.data.local
+package com.example.stackbuzz.data.dao
 
 import androidx.room.Dao
 import androidx.room.Insert

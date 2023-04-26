@@ -3,10 +3,10 @@ package com.example.stackbuzz.data.api
 import android.content.Context
 import androidx.room.Room
 import androidx.room.withTransaction
-import com.example.stackbuzz.data.local.QuestionDatabase
+import com.example.stackbuzz.data.database.QuestionDatabase
 import com.example.stackbuzz.data.model.Question
-import com.example.stackbuzz.util.Resource
-import com.example.stackbuzz.util.networkBoundResource
+import com.example.stackbuzz.data.utils.Resource
+import com.example.stackbuzz.helpers.networkBoundResource
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 

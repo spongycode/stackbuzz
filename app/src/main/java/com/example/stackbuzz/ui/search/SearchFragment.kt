@@ -1,4 +1,4 @@
-package com.example.stackbuzz.ui.fragment
+package com.example.stackbuzz.ui.search
 
 import android.app.AlertDialog
 import android.app.Dialog
@@ -30,8 +30,9 @@ import com.example.stackbuzz.R
 import com.example.stackbuzz.data.api.ApiRepository
 import com.example.stackbuzz.data.model.Question
 import com.example.stackbuzz.databinding.FragmentSearchBinding
-import com.example.stackbuzz.util.HelperFunctions
-import com.example.stackbuzz.util.Resource
+import com.example.stackbuzz.helpers.HelperFunctions
+import com.example.stackbuzz.data.utils.Resource
+import com.example.stackbuzz.ui.webview.WebViewFragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipDrawable
@@ -48,7 +49,7 @@ class SearchFragment : Fragment() {
     lateinit var dialogView: View
 
     private lateinit var chipGroup: ChipGroup
-    private lateinit var questionAdapter: SearchFragment.SearchRecyclerAdapter
+    private lateinit var questionAdapter: SearchRecyclerAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,

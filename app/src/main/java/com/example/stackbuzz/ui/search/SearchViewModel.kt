@@ -1,14 +1,13 @@
-package com.example.stackbuzz.ui.fragment
+package com.example.stackbuzz.ui.search
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.liveData
 import androidx.lifecycle.viewModelScope
 import com.example.stackbuzz.data.api.ApiRepository
 import com.example.stackbuzz.data.model.Question
-import com.example.stackbuzz.util.Resource
+import com.example.stackbuzz.data.utils.Resource
 import kotlinx.coroutines.launch
 
 class SearchViewModel(private val repository: ApiRepository) : ViewModel() {

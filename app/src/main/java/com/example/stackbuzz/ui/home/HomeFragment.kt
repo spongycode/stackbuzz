@@ -1,4 +1,4 @@
-package com.example.stackbuzz.ui.fragment
+package com.example.stackbuzz.ui.home
 
 import android.content.Context
 import android.os.Build
@@ -23,7 +23,8 @@ import com.example.stackbuzz.R
 import com.example.stackbuzz.data.api.ApiRepository
 import com.example.stackbuzz.data.model.Question
 import com.example.stackbuzz.databinding.FragmentHomeBinding
-import com.example.stackbuzz.util.HelperFunctions.getTimeAgo
+import com.example.stackbuzz.ui.webview.WebViewFragment
+import com.example.stackbuzz.helpers.HelperFunctions.getTimeAgo
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.AdView
 import com.google.android.material.bottomnavigation.BottomNavigationView

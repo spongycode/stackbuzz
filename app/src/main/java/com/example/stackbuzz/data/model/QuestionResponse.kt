@@ -3,7 +3,7 @@ package com.example.stackbuzz.data.model
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import androidx.room.TypeConverters
-import com.example.stackbuzz.data.local.DataConverter
+import com.example.stackbuzz.data.utils.DataConverter
 
 data class QuestionResponse(
     val items: List<Question>? = null,

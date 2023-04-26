@@ -1,4 +1,4 @@
-package com.example.stackbuzz.util
+package com.example.stackbuzz.data.utils
 
 sealed class Resource<T>(
     val data: T? = null,

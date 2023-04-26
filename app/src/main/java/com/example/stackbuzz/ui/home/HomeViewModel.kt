@@ -1,4 +1,4 @@
-package com.example.stackbuzz.ui.fragment
+package com.example.stackbuzz.ui.home
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
@@ -8,7 +8,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.asLiveData
 import com.example.stackbuzz.data.api.ApiRepository
 import com.example.stackbuzz.data.model.Question
-import com.example.stackbuzz.util.Resource
+import com.example.stackbuzz.data.utils.Resource
 
 class HomeViewModel(private val repository: ApiRepository) : ViewModel() {
 

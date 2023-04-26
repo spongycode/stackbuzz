@@ -1,4 +1,4 @@
-package com.example.stackbuzz.util
+package com.example.stackbuzz.helpers
 
 import android.content.Context
 import android.os.Build

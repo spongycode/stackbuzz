@@ -1,4 +1,4 @@
-package com.example.stackbuzz.data.local
+package com.example.stackbuzz.data.utils
 
 import androidx.room.TypeConverter
 import com.example.stackbuzz.data.model.Owner

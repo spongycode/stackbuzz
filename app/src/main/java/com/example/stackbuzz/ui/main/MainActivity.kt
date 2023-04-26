@@ -1,12 +1,12 @@
-package com.example.stackbuzz.ui
+package com.example.stackbuzz.ui.main
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.example.stackbuzz.R
 import com.example.stackbuzz.databinding.ActivityMainBinding
-import com.example.stackbuzz.ui.fragment.HomeFragment
-import com.example.stackbuzz.ui.fragment.SearchFragment
+import com.example.stackbuzz.ui.home.HomeFragment
+import com.example.stackbuzz.ui.search.SearchFragment
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
