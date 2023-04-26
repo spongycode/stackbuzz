@@ -37,6 +37,8 @@ class MainActivity : AppCompatActivity() {
                     if (currentFragment != searchFragment) {
                         loadFragment(searchFragment)
                         currentFragment = searchFragment
+                    } else {
+                        searchFragment.scrollToTop()
                     }
                     true
                 }

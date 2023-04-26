@@ -18,6 +18,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.stackbuzz.R
@@ -60,6 +61,11 @@ class SearchFragment : Fragment() {
 
         observeFilteredQuestions()
         observeTags()
+        addScrollListener()
+        binding.goUpFab.setOnClickListener {
+            scrollToTop()
+        }
+        binding.goUpFab.hide()
 
         binding.btnSearch.setOnClickListener {
             startSearch()
@@ -106,6 +112,11 @@ class SearchFragment : Fragment() {
         viewModel.editTextValue = binding.etSearch.text.toString()
         viewModel.searchQuery(binding.etSearch.text.toString())
         HelperFunctions.hideKeyboard(requireContext(), binding.etSearch)
+        scrollToTop()
+    }
+
+    fun scrollToTop() {
+        binding.rvSearch.scrollToPosition(0)
     }
 
     private fun observeFilteredQuestions() {
@@ -125,7 +136,6 @@ class SearchFragment : Fragment() {
                     if (resource.data.isEmpty()) {
                         binding.tvErrorMessage.text = "No results found :("
                         binding.tvErrorMessage.visibility = View.VISIBLE
-
                     }
                 }
 
@@ -136,6 +146,7 @@ class SearchFragment : Fragment() {
                     binding.loadingContainer.visibility = View.GONE
                 }
             }
+            scrollToTop()
         }
     }
 
@@ -154,6 +165,21 @@ class SearchFragment : Fragment() {
                 chipGroup.addView(chip)
             }
         }
+    }
+
+    private fun addScrollListener() {
+        binding.rvSearch.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                super.onScrolled(recyclerView, dx, dy)
+                val layoutManager = recyclerView.layoutManager as LinearLayoutManager
+                val firstVisibleItemPosition = layoutManager.findFirstVisibleItemPosition()
+                if (firstVisibleItemPosition > 2) {
+                    binding.goUpFab.show()
+                } else {
+                    binding.goUpFab.hide()
+                }
+            }
+        })
     }
 
     private fun setupChipListener(chip: Chip) {
@@ -187,7 +213,6 @@ class SearchFragment : Fragment() {
         private val context: Context
     ) :
         RecyclerView.Adapter<SearchRecyclerAdapter.ViewHolder>() {
-
         private val mainDiffUtil = object : DiffUtil.ItemCallback<Question>() {
             override fun areItemsTheSame(oldItem: Question, newItem: Question): Boolean {
                 return oldItem.title == newItem.title

@@ -6,4 +6,9 @@
     <color name="white">#FFFFFFFF</color>
     <color name="trans_black">#6F000000</color>
     <color name="trans_white">#90FFFFFF</color>
+    <color name="brand_green">#B6D6CC</color>
+    <color name="brand_blue">#74A4BC</color>
+    <color name="brand_status">#8EC2DC</color>
+    <color name="brand_purple">#29339B</color>
+    <color name="brand_orange">#FF3A20</color>
 </resources>

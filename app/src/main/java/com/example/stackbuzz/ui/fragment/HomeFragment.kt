@@ -52,6 +52,7 @@ class HomeFragment : Fragment() {
             binding.swipeRefreshLayout.isRefreshing = false
         }
         addScrollListener()
+        binding.goUpFab.hide()
         updateQuestions()
         return binding.root
     }

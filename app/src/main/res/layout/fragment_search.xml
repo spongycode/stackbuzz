@@ -32,6 +32,7 @@
         android:layout_width="wrap_content"
         android:layout_height="0dp"
         android:layout_marginEnd="10dp"
+        android:backgroundTint="@color/brand_purple"
         android:paddingHorizontal="0dp"
         android:text="SEARCH"
         android:textSize="12sp"
@@ -52,8 +53,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
-        android:textColor="#0F1419"
         android:text="Search your query above"
+        android:textColor="#0F1419"
         android:textSize="20sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/btn_search"
@@ -104,9 +105,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Loading"
-            android:textStyle="bold"
             android:textColor="@color/white"
             android:textSize="25sp"
+            android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="@+id/linearProgressIndicator"
             app:layout_constraintStart_toStartOf="@+id/linearProgressIndicator"
@@ -120,10 +121,22 @@
             android:layout_marginHorizontal="50dp"
             android:layout_marginTop="20dp"
             android:indeterminate="true"
+            app:indicatorColor="@color/brand_orange"
             app:layout_constraintTop_toBottomOf="@id/tv_loading"
             app:trackThickness="6dp" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/go_up_fab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="25dp"
+        android:backgroundTint="@color/brand_blue"
+        android:src="@drawable/baseline_keyboard_double_arrow_up_24"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:tint="@color/white" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
