@@ -139,9 +139,9 @@ class HomeFragment : Fragment() {
                 val questionHolder = holder as ViewHolder
                 questionHolder.title.text = question.title
                 questionHolder.username.text = question.owner!!.display_name + " · "
-                questionHolder.score.text = question.score.toString()
-                questionHolder.answerCount.text = question.answer_count.toString()
-                questionHolder.viewCount.text = question.view_count.toString()
+                questionHolder.score.text = question.score.toString() + " votes"
+                questionHolder.answerCount.text = question.answer_count.toString() + " answers"
+                questionHolder.viewCount.text = question.view_count.toString() + " views"
                 Glide
                     .with(context)
                     .load(question.owner.profile_image)

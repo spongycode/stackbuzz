@@ -259,9 +259,9 @@ class SearchFragment : Fragment() {
             val question: Question = mainDiffer.currentList[position]
             holder.title.text = question.title
             holder.username.text = question.owner!!.display_name + " · "
-            holder.score.text = question.score.toString()
-            holder.answerCount.text = question.answer_count.toString()
-            holder.viewCount.text = question.view_count.toString()
+            holder.score.text = question.score.toString() + " votes"
+            holder.answerCount.text = question.answer_count.toString() + " answers"
+            holder.viewCount.text = question.view_count.toString() + " views"
             Glide
                 .with(context)
                 .load(question.owner.profile_image)
