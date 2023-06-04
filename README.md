@@ -19,7 +19,13 @@ StackBuzz is an Android app built with Kotlin that allows users to browse and se
 - <b>Glide:</b> An image loading and caching library for Android, used for displaying owner's profile images. 🖼️
 - <b>Google Mobile Ads SDK:</b> A library for integrating Google AdMob ads into the app. 💰
 
-## 📷 Previews
+## Application Architecture 🏛️
+<p align="center">  
+<img src="assets/stackbuzz_arc_diagram.png" alt="drawing" width="600" /></br></br>
+</p>
+
+
+## Previews 📷
 <p align="center">  
 <img src="assets/pic_1.png" alt="drawing" width="600" /></br></br>
 <img src="assets/pic_2.png" alt="drawing" width="600" /></br></br>
